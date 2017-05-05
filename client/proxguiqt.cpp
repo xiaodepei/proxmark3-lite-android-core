@@ -87,6 +87,7 @@ void ProxGuiQT::_Exit(void) {
 void ProxGuiQT::MainLoop()
 {
 	plotapp = new QApplication(argc, argv);
+	plotapp->setAttribute(Qt::AA_DontShowIconsInMenus, true);
 
 	connect(this, SIGNAL(ShowGraphWindowSignal()), this, SLOT(_ShowGraphWindow()));
 	connect(this, SIGNAL(RepaintGraphWindowSignal()), this, SLOT(_RepaintGraphWindow()));
