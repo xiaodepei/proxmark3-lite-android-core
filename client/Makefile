@@ -36,42 +36,9 @@ else
 	endif
 endif
 
-# Check for correctly configured Qt5
-QTINCLUDES = $(shell pkg-config --cflags Qt5Core Qt5Widgets 2>/dev/null)
-QTLDLIBS = $(shell pkg-config --libs Qt5Core Qt5Widgets 2>/dev/null)
-MOC = $(shell pkg-config --variable=host_bins Qt5Core)/moc
-UIC = $(shell pkg-config --variable=host_bins Qt5Core)/uic
-ifeq ($(QTINCLUDES), )
-# if Qt5 not found check for correctly configured Qt4	
-	QTINCLUDES = $(shell pkg-config --cflags QtCore QtGui 2>/dev/null)
-	QTLDLIBS = $(shell pkg-config --libs QtCore QtGui 2>/dev/null)
-	MOC = $(shell pkg-config --variable=moc_location QtCore)
-	UIC = $(shell pkg-config --variable=uic_location QtCore)
-else
-	CXXFLAGS += -std=c++11 -fPIC
-endif
-ifeq ($(QTINCLUDES), )
-# if both pkg-config commands failed, search in common places
-	ifneq ($(QTDIR), )
-		QTINCLUDES = -I$(QTDIR)/include -I$(QTDIR)/include/QtCore -I$(QTDIR)/include/QtGui
-		QTLDLIBS = -L$(QTDIR)/lib -lQtCore4 -lQtGui4
-		ifneq ($(wildcard $(QTDIR)/include/QtWidgets),)
-			QTINCLUDES += -I$(QTDIR)/include/QtWidgets
-			QTLDLIBS = -L$(QTDIR)/lib -lQt5Widgets -lQt5Gui -lQt5Core
-			CXXFLAGS += -std=c++11 -fPIC
-		endif
-		MOC = $(QTDIR)/bin/moc
-		UIC = $(QTDIR)/bin/uic
-	endif
-endif
+CXXFLAGS += -std=c++11 -fPIC
 
-
-ifneq ($(QTLDLIBS), )
-    QTGUIOBJS = $(OBJDIR)/proxgui.o $(OBJDIR)/proxguiqt.o $(OBJDIR)/proxguiqt.moc.o
-    CFLAGS += -DHAVE_GUI
-else
-    QTGUIOBJS = $(OBJDIR)/guidummy.o
-endif
+QTGUIOBJS = $(OBJDIR)/guidummy.o
 
 # Flags to generate temporary dependency files
 DEPFLAGS = -MT $@ -MMD -MP -MF $(OBJDIR)/$*.Td
@@ -165,10 +132,10 @@ ZLIBOBJS = $(ZLIBSRCS:%.c=$(OBJDIR)/%.o)
 
 BINS = proxmark3 flasher fpga_compress
 WINBINS = $(patsubst %, %.exe, $(BINS))
-CLEAN = $(BINS) $(WINBINS) $(COREOBJS) $(CMDOBJS) $(ZLIBOBJS) $(QTGUIOBJS) $(OBJDIR)/*.o *.moc.cpp ui/ui_overlays.h
+CLEAN = $(BINS) $(WINBINS) $(COREOBJS) $(CMDOBJS) $(ZLIBOBJS) $(QTGUIOBJS) $(OBJDIR)/*.o *.moc.cpp
 
 # need to assign dependancies to build these first...
-all: ui/ui_overlays.h lua_build $(BINS)
+all: lua_build $(BINS)
 
 all-static: LDLIBS:=-static $(LDLIBS)
 all-static: proxmark3 flasher fpga_compress
@@ -185,9 +152,6 @@ fpga_compress: $(OBJDIR)/fpga_compress.o $(ZLIBOBJS)
 
 proxguiqt.moc.cpp: proxguiqt.h
 	$(MOC) -o$@ $^
-
-ui/ui_overlays.h: ui/overlays.ui
-	$(UIC) $^ > $@
 
 lualibs/usb_cmd.lua: ../include/usb_cmd.h
 	awk -f usb_cmd_h2lua.awk $^ > $@
