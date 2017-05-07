@@ -1,17 +1,6 @@
-# proxmark3-lite
+# proxmark3-lite-android
 
-Remove QT related functions. It means that qt is not required anymore, and graphing is not working anymore.
+Remove QT related functions. It means that qt is not required anymore, and graphing is not working anymore. For android client build only.
 
-## Installation
-
-[OS X] Run the following in your command-line:
-
-```sh
-$ brew tap DickyT/proxmark3-lite
-$ brew install proxmark3-lite
-$ pm3
-```
-
-[Linux / Windows]
-
-Checkout this repo, and build like the official one.
+## Repo Info
+Forked from [`DickyT/proxmark3-lite`](https://github.com/DickyT/proxmark3-lite), for [`DickyT/proxmark3-lite-android`](https://DickyT/proxmark3-lite-android) use only.
