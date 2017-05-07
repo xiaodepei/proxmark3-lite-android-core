@@ -1,4 +1,4 @@
-# proxmark3-lite-android
+# proxmark3-lite-android-core
 
 Remove QT related functions. It means that qt is not required anymore, and graphing is not working anymore. For android client build only.
 
